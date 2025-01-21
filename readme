@@ -12,3 +12,17 @@ Developed by:
 guided by:
 Prof. Rachana Chapte
 of AI&DS dept at ADYPSOE.
+
+Build using:
+Python 3.12.4
+
+Voice module libraries:
+openai-whisper
+pyaudio
+
+Excel manipulation libraries:
+Pandas
+openpyxl
+
+UI built using:
+Kivy
