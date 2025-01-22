@@ -9,7 +9,7 @@ Developed by:
 3. Vedant Achari
 4. Raunak Jha
 
-guided by:
+Guided by:
 Prof. Rachana Chapte
 of AI&DS dept at ADYPSOE.
 
@@ -19,6 +19,8 @@ Python 3.12.4
 Voice module libraries:
 openai-whisper
 pyaudio
+wave
+ffmpeg
 
 Excel manipulation libraries:
 Pandas
