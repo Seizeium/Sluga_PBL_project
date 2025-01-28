@@ -4,12 +4,14 @@ class ExcelSheetManager:
     def __init__(self):
         self.dataframe = pd.DataFrame()
 
+    # Sheet Management Methods
     def create_sheet(self, rows):
-        # Initialize a DataFrame with named columns
+        """Creates a new sheet with specified rows."""
         self.dataframe = pd.DataFrame(index=range(rows), columns=["Name", "Roll No", "Div"])
         print(f"Created a sheet with {rows} rows and 3 columns: Name, Roll No, Div.")
 
     def enter_data(self):
+        """Allows the user to input data row by row."""
         print("Enter data for the sheet row by row. Type 'done' to skip filling the rest of a row.")
         for row in range(len(self.dataframe)):
             for col in self.dataframe.columns:
@@ -19,10 +21,12 @@ class ExcelSheetManager:
                 self.dataframe.at[row, col] = value
 
     def display_sheet(self):
+        """Displays the current sheet."""
         print("\nCurrent Sheet:")
         print(self.dataframe)
 
     def save_to_excel(self, filename):
+        """Saves the current sheet to an Excel file."""
         if not filename.endswith(".xlsx"):
             filename += ".xlsx"
         
@@ -32,9 +36,10 @@ class ExcelSheetManager:
         except Exception as e:
             print(f"Error saving file: {e}")
 
+    # Editing Methods
     def edit_existing_sheet(self, filename):
+        """Loads and allows editing of an existing Excel sheet."""
         try:
-            # Load the existing Excel sheet
             self.dataframe = pd.read_excel(filename, engine='openpyxl')
             print("Loaded the existing Excel sheet.")
             self.display_sheet()
@@ -45,7 +50,6 @@ class ExcelSheetManager:
             print(f"Error loading file: {e}")
             return
 
-        # Editing the content
         print("Enter the row and column to edit the data (1-based index). Type 'done' to exit.")
         while True:
             row = input("Enter row number to edit (or 'done' to finish): ")
@@ -63,21 +67,48 @@ class ExcelSheetManager:
             except ValueError:
                 print("Invalid row number. Please enter a valid number.")
                 continue
-            
-            # Get new value
+
             new_value = input(f"Enter new value for cell ({row + 1}, {col}): ")
             self.dataframe.at[row, col] = new_value
             print("Value updated successfully.")
             self.display_sheet()
 
-        # Save the changes
         save_choice = input("Do you want to save the changes? (yes/no): ")
         if save_choice.lower() == 'yes':
             self.save_to_excel(filename)
         else:
             print("Changes discarded.")
 
-# Main execution
+    def delete_data(self):
+        """Deletes specific rows or columns from the sheet."""
+        print("You can delete specific rows or columns from the sheet.")
+        while True:
+            choice = input("Do you want to delete a row or column? (row/column/done): ").strip().lower()
+            if choice == 'done':
+                break
+            elif choice == 'row':
+                try:
+                    row = int(input("Enter the row number to delete (1-based index): ")) - 1
+                    if row < 0 or row >= len(self.dataframe):
+                        print("Row out of range. Please try again.")
+                        continue
+                    self.dataframe = self.dataframe.drop(index=row).reset_index(drop=True)
+                    print(f"Row {row + 1} deleted successfully.")
+                    self.display_sheet()
+                except ValueError:
+                    print("Invalid input. Please enter a valid row number.")
+            elif choice == 'column':
+                col = input("Enter the column name to delete: ").strip()
+                if col not in self.dataframe.columns:
+                    print("Invalid column name. Please try again.")
+                else:
+                    self.dataframe = self.dataframe.drop(columns=[col])
+                    print(f"Column '{col}' deleted successfully.")
+                    self.display_sheet()
+            else:
+                print("Invalid choice. Please type 'row', 'column', or 'done'.")
+
+# Main Execution
 if __name__ == "__main__":
     manager = ExcelSheetManager()
 
@@ -96,7 +127,10 @@ if __name__ == "__main__":
     elif action == 'edit':
         filename = input("Enter the filename of the existing Excel sheet: ").strip()
         manager.edit_existing_sheet(filename)
+
+        delete_choice = input("Do you want to delete data from the sheet? (yes/no): ")
+        if delete_choice.lower() == 'yes':
+            manager.delete_data()
     else:
         print("Invalid choice. Exiting.")
 
-        
