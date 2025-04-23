@@ -42,6 +42,7 @@ import threading
 import json
 import os
 import time
+import esman
 
 HIS_F = "history.json"
 
@@ -120,6 +121,7 @@ class MyApp(FloatLayout):
         super().__init__(**kwargs)
         self.dark_mode = True
         self.menu_ste = False
+        self.suggt_ste = False
         self.rect_initial_pos = None 
         # self.text = "History"
         # self.label = Label(text="",size_hint=(None, None), size=(100, 50), pos=(50, 50))
@@ -142,6 +144,17 @@ class MyApp(FloatLayout):
             padding=(10, 10),
             font_size=30,    
         )
+
+        self.crinput = TextInput(
+            # size_hint=(0.4, 0.2),
+            # pos_hint={'center_x': 0.5, 'center_y': 0.46},
+            hint_text="File Name",
+            background_color=(0, 0, 0, 0),
+            # foreground_color=(0, 0, 0, 1),
+            padding=(10, 10),
+            font_size=30,    
+        )
+
         self.add_widget(self.text_input)
         # self.add_widget(self.rect_label)
 
@@ -166,6 +179,118 @@ class MyApp(FloatLayout):
         pos_hint={'center_x': 0.5, 'center_y': 0.5+0.25}
         )
         self.add_widget(self.image1)
+
+        self.SUbut = Button(
+                text="",
+                size_hint=(0.27, 0.07),
+                background_color=(1, 1, 1,0),
+                color=(1, 1, 1, 1),
+                )
+        
+        self.SUbut.bind(on_press = self.on_sugg)
+        
+        self.RRbut = Button(
+            text="",
+            size_hint=(0.27, 0.07),
+            background_color=(1, 1, 1,0),
+            color=(1, 1, 1, 1),
+            )
+        
+        self.HIbut = Button(
+            text="",
+            size_hint=(0.27, 0.07),
+            background_color=(1, 1, 1,0),
+            color=(1, 1, 1, 1),
+            )
+        
+        self.THbut = Button(
+            text="",
+            size_hint=(0.27, 0.07),
+            background_color=(1, 1, 1,0),
+            color=(1, 1, 1, 1),
+            )
+        
+        self.label = Label(
+            text="Suggestion",
+            font_size=30,
+            size_hint=(None, None),
+            size=(200, 50),
+            halign='left',
+            valign='middle'
+        )
+        self.label.bind(size=self.label.setter('text_size'))
+
+        self.crlabel = Label(
+            text="Create",
+            font_size=30,
+            size_hint=(None, None),
+            size=(200, 50),
+            halign='left',
+            valign='middle'
+        )
+        self.crlabel.bind(size=self.crlabel.setter('text_size'))
+
+        self.oplable = Label(
+            text="Open",
+            font_size=30,
+            size_hint=(None, None),
+            size=(200, 50),
+            halign='left',
+            valign='middle'
+        )
+        self.oplable.bind(size=self.crlabel.setter('text_size'))
+
+        self.edlable = Label(
+            text="Edit",
+            font_size=30,
+            size_hint=(None, None),
+            size=(200, 50),
+            halign='left',
+            valign='middle'
+        )
+        self.edlable.bind(size=self.crlabel.setter('text_size'))
+
+        self.dellaab = Label(
+            text="Delete",
+            font_size=30,
+            size_hint=(None, None),
+            size=(200, 50),
+            halign='left',
+            valign='middle'
+        )
+        self.dellaab.bind(size=self.crlabel.setter('text_size'))
+
+       
+       
+        self.label1 = Label(
+            text="Recents",
+            font_size=30,
+            size_hint=(None, None),
+            size=(200, 50),
+            halign='left',
+            valign='middle'
+        )
+        self.label1.bind(size=self.label.setter('text_size'))
+        self.label2 = Label(
+            text="History",
+            font_size=30,
+            size_hint=(None, None),
+            size=(200, 50),
+            halign='left',
+            valign='middle'
+        )
+        self.label2.bind(size=self.label.setter('text_size'))
+        self.label3 = Label(
+            text="Theme",
+            font_size=30,
+            size_hint=(None, None),
+            size=(200, 50),
+            halign='left',
+            valign='middle'
+        )
+        self.label3.bind(size=self.label.setter('text_size'))
+
+        # self.add_widget(label)
 
         self.his = Image(
         source="more_vert.png",
@@ -290,7 +415,7 @@ class MyApp(FloatLayout):
         
         anim.start(self.image)
 
-    def animate_menu(self, target_x, update_rect, tt, dur):
+    def animate_menu(self, target_x, update_rect, sub_men,  tt, dur):
         self.rect_initial_pos = self.rectt.pos
         # self.rec_mp = self.rec
         anim_this = Animation(pos=(80, Window.height - 85), duration=0.6, t='out_quad') 
@@ -299,10 +424,21 @@ class MyApp(FloatLayout):
         anim_his = Animation(size=((Window.width * tt), 500), duration=dur, t = 'in_out_quad')
         anim = Animation(x=((Window.width * target_x) - (self.rectt.size[0] / 2)+self.rect_width-85), duration=0.2)
         anim_but = Animation(x=((Window.width * target_x) - (self.rectt.size[0] / 2)+self.rect_width-85), duration=0.2)
-        anim_his.start(self.rv)
+        # anim_his.start(self.rv)
+        anim_sug = Animation(size = ((Window.width*sub_men, Window.height * 0.09)),duration=dur, t = 'in_out_quad')
+        anim_crd = Animation(size = ((Window.width*sub_men, Window.height * 0.09)),duration=dur, t = 'in_out_quad')
+        anim_set = Animation(size = ((Window.width*sub_men, Window.height * 0.09)),duration=dur, t = 'in_out_quad')   
+        anim_hisc = Animation(size = ((Window.width*sub_men, Window.height * 0.09)),duration=dur, t = 'in_out_quad')
+        # anim_his.start(self.rv)
+        anim_set.start(self.setc)
+        anim_hisc.start(self.hiscol)
         anim.start(self.image)
+        anim_sug.start(self.sugrec)
+        anim_crd.start(self.cr_doc)
         anim_but.start(self.mic_but)
         anim_text.start(self.text_input)
+        
+
         # anim_this.start(self.label)
         anim_image.start(self.image1)
         if self.menu_ste == True:
@@ -355,6 +491,112 @@ class MyApp(FloatLayout):
                 pos=(0, 0),
                 size=(0, Window.height),
             )
+
+            
+            self.su_col = Color(0.10588, 0.10588, 0.10588, 1) 
+            self.sugrec = RoundedRectangle(
+                pos=(30, Window.height-260), 
+                size=(0, Window.height * 0.09),
+                radius=[25])
+            
+            self.cre = Color(0.10588, 0.10588, 0.10588, 1) 
+            self.crerec = RoundedRectangle(
+                pos=(60, Window.height-260 - 110), 
+                size=(0, Window.height * 0.08),
+                radius=[25])
+            self.crlabel.pos[0] = 60+10
+            self.crlabel.pos[1] = Window.height - 260 - 110 + 26
+            # self.add_widget(self.crlabel)
+            
+            self.open = Color(0.10588, 0.10588, 0.10588, 1) 
+            self.openr = RoundedRectangle(
+                pos=(60, Window.height-260 - 220), 
+                size=(0, Window.height * 0.08),
+                radius=[25])
+            
+            self.oplable.pos[0] = 60+10
+            self.oplable.pos[1] = Window.height - 260 - 220 + 26
+            # self.add_widget(self.crlabel)
+            
+            self.delete = Color(0.10588, 0.10588, 0.10588, 1) 
+            self.delete = RoundedRectangle(
+                pos=(60, Window.height-260 - 330), 
+                size=(0, Window.height * 0.08),
+                radius=[25])
+            
+            self.dellaab.pos[0] = 60+10
+            self.dellaab.pos[1] = Window.height - 260 - 330 + 26
+            
+            self.edit = Color(0.10588, 0.10588, 0.10588, 1) 
+            self.editrec = RoundedRectangle(
+                pos=(60, Window.height-260 - 440), 
+                size=(0, Window.height * 0.08),
+                radius=[25])
+            
+            self.edlable.pos[0] = 60+10
+            self.edlable.pos[1] = Window.height - 260 - 440 + 26
+            
+            self.label.pos[0] = self.sugrec.pos[0] + 35
+            self.label.pos[1] = Window.height - 260 + 26
+            # self.add_widget(self.label)
+            
+            self.cr_doc = Color(0.10588, 0.10588, 0.10588, 1) 
+            self.cr_doc = RoundedRectangle(
+                pos=(30, Window.height-380), 
+                size=(0, Window.height * 0.09),
+                radius=[25])
+            self.label1.pos[0] = self.cr_doc.pos[0] + 35
+            self.label1.pos[1] = Window.height - 380 + 26
+            # self.add_widget(self.label1)
+
+            self.set_col = Color(0.10588, 0.10588, 0.10588, 1) 
+            self.setc = RoundedRectangle(
+                pos=(30, Window.height-500), 
+                size=(0, Window.height * 0.09),
+                radius=[25])
+            self.label3.pos[0] = self.setc.pos[0] + 35
+            self.label3.pos[1] = Window.height - 500 + 26
+            # self.add_widget(self.label3)
+            
+
+            self.hisco = Color(0.10588, 0.10588, 0.10588, 1) 
+            self.hiscol = RoundedRectangle(
+                pos=(30, Window.height-620), 
+                size=(0, Window.height * 0.09),
+                radius=[25])
+            self.label2.pos[0] = self.hiscol.pos[0] + 35
+            self.label2.pos[1] = Window.height - 620 + 26
+            # self.add_widget(self.label2)
+            
+            self.SUbut.pos[0] = self.sugrec.pos[0] 
+            self.SUbut.pos[1] = Window.height - 260 + 15
+
+            self.RRbut.pos[0] = self.sugrec.pos[0] 
+            self.RRbut.pos[1] = Window.height - 380 + 15
+
+            self.HIbut.pos[0] = self.sugrec.pos[0] 
+            self.HIbut.pos[1] = Window.height - 500 + 15
+
+            self.THbut.pos[0] = self.sugrec.pos[0] 
+            self.THbut.pos[1] = Window.height - 620 + 15
+
+            # self.add_widget(self.SUbut)
+            # self.add_widget(self.RRbut)
+            # self.add_widget(self.HIbut)
+            # self.add_widget(self.THbut)
+            # self.su_col = Color(1, 0.0222, 0.0222, 1) 
+            # self.sugrec = RoundedRectangle(
+            #     pos=(30, Window.height-260), 
+            #     size=(0, Window.height * 0.09),
+            #     radius=[25])
+            
+            # self.su_col = Color(1, 0.0222, 0.0222, 1) 
+            # self.sugrec = RoundedRectangle(
+            #     pos=(30, Window.height-260), 
+            #     size=(0, Window.height * 0.09),
+            #     radius=[25])
+            
+
         # with self.canvas.before:
         #     Color(1, 1, 1, 1)  
         #     self.label = CoreLabel(text="History", font_size=(45))
@@ -393,8 +635,9 @@ class MyApp(FloatLayout):
                 self.men_col = Color(1,1,1,1)
             self.menu_rec = Rectangle(
                 pos=(0, 0),
-                size=(self.widthx, Window.height), 
+                size=(0, Window.height), 
             )
+            
             
     def create_gradient(self):
         texture = Texture.create(size=(2, 2), colorfmt='rgba')
@@ -407,6 +650,66 @@ class MyApp(FloatLayout):
         texture.wrap = 'repeat'
         texture.mag_filter = 'linear'
         return texture
+
+    def anim_sugge(self, tt,ss): 
+            
+        anim_sug = Animation(pos = (self.sugrec.pos[0], (Window.height-380)-tt), t = 'in_out_quad')
+        anim_sug.start(self.cr_doc)
+
+        crear = Animation(size = (Window.width*ss, (Window.height * 0.08)), t = 'in_out_quad')
+        crear.start(self.crerec)
+
+        crear = Animation(size = (Window.width*ss, (Window.height * 0.08)), t = 'in_out_quad')
+        crear.start(self.openr)
+
+        crear = Animation(size = (Window.width*ss, (Window.height * 0.08)), t = 'in_out_quad')
+        crear.start(self.delete)
+
+        crear = Animation(size = (Window.width*ss, (Window.height * 0.08)), t = 'in_out_quad')
+        crear.start(self.editrec)
+
+        anim_crd = Animation(pos = (self.cr_doc.pos[0], (Window.height-500)-tt), t = 'in_out_quad')
+        anim_crd.start(self.setc)
+
+        but1 = Animation(pos = (self.sugrec.pos[0], (Window.height-380)-tt), t = 'in_out_quad')
+        but1.start(self.RRbut)
+
+        anim_hisc = Animation(pos = (self.hiscol.pos[0], (Window.height-620)-tt), t = 'in_out_quad')
+        anim_hisc.start(self.hiscol)
+
+        but2 = Animation(pos = (self.hiscol.pos[0], (Window.height-500)-tt), t = 'in_out_quad')
+        but2.start(self.HIbut)
+
+        but4 = Animation(pos = (self.hiscol.pos[0], (Window.height-500)-tt), t = 'in_out_quad')
+        but4.start(self.THbut)
+
+        anim_all = Animation(pos = (self.label.pos[0], ( Window.height - 380 + 26) - tt), t = 'in_out_quad')
+        anim_all.start(self.label1)
+
+        anim_all1 = Animation(pos = (self.label1.pos[0], (Window.height - 500 + 26) -tt), t = 'in_out_quad')
+        anim_all1.start(self.label3)
+
+        anim_all2 = Animation(pos = (self.label3.pos[0], (Window.height - 620 + 26) - tt), t = 'in_out_quad')
+        anim_all2.start(self.label2)
+
+
+
+    def on_sugg(self, instance):
+        if not self.suggt_ste:
+            self.suggt_ste = True
+            self.anim_sugge(450, 0.23)
+            self.add_widget(self.crlabel)
+            self.add_widget(self.oplable)
+            self.add_widget(self.edlable)
+            self.add_widget(self.dellaab)
+            # self.add_widget(self.crinput)
+        else:
+            self.suggt_ste = False
+            self.anim_sugge(0, 0)
+            self.remove_widget(self.crlabel)
+            self.remove_widget(self.oplable)
+            self.remove_widget(self.edlable)
+            self.remove_widget(self.dellaab)
 
     def on_click(self, instance):
         self.canvas.before.clear() 
@@ -432,13 +735,32 @@ class MyApp(FloatLayout):
 
     def on_menu(self, instance): 
         if not self.menu_ste:
-            self.animate_menu(0.6, self.update_rect, 0.3, 0.2)
+            self.animate_menu(0.6, self.update_rect,0.267, 0.3, 0.2)
             # self.lay.add_widget(self.label)
             self.menu_ste = True
+            self.add_widget(self.label1)
+            self.add_widget(self.label)
+            self.add_widget(self.label3)
+            self.add_widget(self.label2)
+            self.add_widget(self.SUbut)
+            self.add_widget(self.RRbut)
+            self.add_widget(self.HIbut)
+            self.add_widget(self.THbut)
         else:
-            self.animate_menu(0.5,self.update_rect_rev,0, 0.2)
+            self.animate_menu(0.5,self.update_rect_rev , 0,0, 0.2)
             # self.lay.remove_widget(self.label)
             self.menu_ste = False
+            self.remove_widget(self.label1)
+            self.remove_widget(self.label)
+            self.remove_widget(self.label3)
+            self.remove_widget(self.label2)
+
+            self.remove_widget(self.SUbut)
+            self.remove_widget(self.RRbut)
+            self.remove_widget(self.HIbut)
+            self.remove_widget(self.THbut)
+
+            
 
 class MainApp(App):
     def build(self):
