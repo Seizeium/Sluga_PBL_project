@@ -145,15 +145,15 @@ class MyApp(FloatLayout):
             font_size=30,    
         )
 
-        self.crinput = TextInput(
-            # size_hint=(0.4, 0.2),
-            # pos_hint={'center_x': 0.5, 'center_y': 0.46},
-            hint_text="File Name",
-            background_color=(0, 0, 0, 0),
-            # foreground_color=(0, 0, 0, 1),
-            padding=(10, 10),
-            font_size=30,    
-        )
+        # self.crinput = TextInput(
+        #     # size_hint=(0.4, 0.2),
+        #     # pos_hint={'center_x': 0.5, 'center_y': 0.46},
+        #     hint_text="File Name",
+        #     background_color=(0, 0, 0, 0),
+        #     # foreground_color=(0, 0, 0, 1),
+        #     padding=(10, 10),
+        #     font_size=30,    
+        # )
 
         self.add_widget(self.text_input)
         # self.add_widget(self.rect_label)
@@ -260,8 +260,6 @@ class MyApp(FloatLayout):
         )
         self.dellaab.bind(size=self.crlabel.setter('text_size'))
 
-       
-       
         self.label1 = Label(
             text="Recents",
             font_size=30,
@@ -364,16 +362,25 @@ class MyApp(FloatLayout):
                 self.animate_hover_out()
                 self.is_hovered_image = False
 
-    def on_rec(self, instance):  
-        if audio.state == True:
+    def on_rec(self, instance):
+        if not audio.get_audio_state():
+            self.text_input.text = ""  # Clear previous text
             self.text_input.hint_text = "Listening...."
+            print("Recording started from UI")
+
+            def update_text(text):
+                def update(dt):
+                    self.set_text(text)
+                    self.text_input.hint_text = "How can I assist you today?"
+
+                Clock.schedule_once(update, 0)
+
+            audio.record_audio(update_text)
         else:
-            self.text_input.hint_text = "How can I assist you today?"
+            print("Already recording...")
 
-        def update_text(text):
-            Clock.schedule_once(lambda dt: self.set_text(text), 0)
 
-        audio.record_audio(update_text)
+
 
     def set_text(self, text):
         self.text_input.text = text
